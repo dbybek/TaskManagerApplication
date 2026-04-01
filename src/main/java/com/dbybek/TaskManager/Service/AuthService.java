@@ -3,6 +3,10 @@ package com.dbybek.TaskManager.Service;
 import com.dbybek.TaskManager.Model.User;
 import com.dbybek.TaskManager.Repository.UserRepository;
 import com.dbybek.TaskManager.dtos.AuthRequest;
+import com.dbybek.TaskManager.dtos.AuthResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +15,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -32,15 +38,17 @@ public class AuthService {
         return "User registered successfully";
     }
 
-    public String login(AuthRequest request) {
+    public AuthResponse login(AuthRequest request) {
 
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
+        String token = jwtService.generateToken(request.getUsername());
 
-        return jwtService.generateToken(user.getUsername());
+        return new AuthResponse(token);
     }
 }
