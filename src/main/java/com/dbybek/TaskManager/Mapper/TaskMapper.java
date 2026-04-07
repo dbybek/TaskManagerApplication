@@ -21,6 +21,8 @@ public class TaskMapper {
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
         dto.setDescription(task.getDescription());
+        // ✅ Map username safely
+        dto.setUsername(task.getUser().getUsername());
         dto.setCompleted(task.isCompleted());
         return dto;
     }

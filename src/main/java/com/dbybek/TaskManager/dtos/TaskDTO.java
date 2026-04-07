@@ -11,6 +11,7 @@ import lombok.Setter;
         "id",
         "title",
         "description",
+        "user",
         "completed"
 })
 public class TaskDTO {
@@ -21,6 +22,9 @@ public class TaskDTO {
 
     @NotBlank(message = "Description is required")
     private String description;
+
+    // ✅ Response-only field
+    private String username;
 
     private boolean completed;
 }

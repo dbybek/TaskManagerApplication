@@ -7,8 +7,11 @@ import com.dbybek.TaskManager.dtos.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -31,7 +34,11 @@ public class AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword())); // 🔐
-        user.setRole("USER");
+        if (request.getRole() != null) {
+            user.setRole(request.getRole());
+        } else {
+            user.setRole("ROLE_USER"); // default
+        }
 
         userRepository.save(user);
 
@@ -47,7 +54,13 @@ public class AuthService {
                 )
         );
 
-        String token = jwtService.generateToken(request.getUsername());
+        Optional<User> user = userRepository.findByUsername(request.getUsername());
+
+        if(user.isEmpty()){
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        String token = jwtService.generateToken(user.get().getUsername(), user.get().getRole());
 
         return new AuthResponse(token);
     }
