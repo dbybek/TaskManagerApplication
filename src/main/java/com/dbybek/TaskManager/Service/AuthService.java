@@ -4,6 +4,8 @@ import com.dbybek.TaskManager.Model.User;
 import com.dbybek.TaskManager.Repository.UserRepository;
 import com.dbybek.TaskManager.dtos.AuthRequest;
 import com.dbybek.TaskManager.dtos.AuthResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +23,8 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService) {
@@ -29,7 +33,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String register(AuthRequest request) {
+    public Long register(AuthRequest request) {
 
         User user = new User();
         user.setUsername(request.getUsername());
@@ -42,7 +46,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return "User registered successfully";
+        return user.getId();
     }
 
     public AuthResponse login(AuthRequest request) {
@@ -57,8 +61,11 @@ public class AuthService {
         Optional<User> user = userRepository.findByUsername(request.getUsername());
 
         if(user.isEmpty()){
+            log.warn("Invalid login attempt: {}", request.getUsername());
             throw new UsernameNotFoundException("User not found");
         }
+
+        log.info("Login attempt for user: {}", user.get().getUsername());
 
         String token = jwtService.generateToken(user.get().getUsername(), user.get().getRole());
 

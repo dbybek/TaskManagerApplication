@@ -14,7 +14,8 @@ import java.util.Map;
         "status",
         "error",
         "message",
-        "errors"
+        "errors",
+        "path"
 })
 public class ErrorResponse {
     private LocalDateTime timestamp;
@@ -22,19 +23,22 @@ public class ErrorResponse {
     private String error;
     private String message;
     private Map<String, String> errors;
+    private String path;
 
-    public ErrorResponse(int status, String error, String message) {
+    public ErrorResponse(int status, String error, String message, String path) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
         this.error = error;
         this.message = message;
+        this.path = path;
     }
 
-    public ErrorResponse(int status, String error, Map<String, String> errors) {
+    public ErrorResponse(int status, String error, Map<String, String> errors,String path) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
         this.error = error;
         this.errors = errors;
+        this.path = path;
     }
 
 }

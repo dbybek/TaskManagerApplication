@@ -1,8 +1,9 @@
-# 📝 Task Manager API (Spring Boot)
+# 🚀 Task Manager Backend (Spring Boot + JWT Security)
 
-## 🚀 Overview
+## 📌 Overview
 
-A RESTful backend application built using Spring Boot that allows users to manage tasks with full CRUD functionality, validation, pagination, and proper error handling.
+A production-ready Task Manager REST API built using Spring Boot.
+The application supports secure authentication using JWT, role-based authorization, and user-specific data access.
 
 ---
 
@@ -10,41 +11,72 @@ A RESTful backend application built using Spring Boot that allows users to manag
 
 * Java
 * Spring Boot
+* Spring Security
+* JWT (JSON Web Token)
 * Spring Data JPA
 * MySQL
 * Hibernate
 * Maven
+* Swagger (OpenAPI)
 
 ---
 
-## ✨ Features
+# ✨ Features
+
+## 🔐 Authentication & Security
+
+* JWT-based authentication (stateless)
+* Custom JWT filter for request validation
+* Secure login endpoint
+
+## 🛡 Authorization & Data Ownership
+
+* Role-based access control (USER / ADMIN)
+* Admin can access all tasks 
+* Users can only access their own tasks 
+* Ownership enforced at service layer
+
+## 📋 Task Management
 
 * Create, Read, Update, Delete Tasks
+* Pagination & sorting using Pageable
+
+## 📦 Clean API Design
+
 * DTO-based architecture
-* Global Exception Handling
+* API response wrapper for consistent responses
+* Global exception handling with structured error responses
 * Validation with field-level error messages
-* Pagination & Sorting
-* Clean layered architecture (Controller, Service, Repository)
 
----
+## 📊 API Documentation
 
-## 📂 Project Structure
+* Swagger UI integrated
+* JWT authorization supported in Swagger
 
-controller → Handles API requests
-service → Business logic
-repository → Database interaction
-model → Entity classes
-dto → Data Transfer Objects
-mapper → DTO ↔ Entity conversion
-exception → Custom exception handling
+## 🧱 Architecture
 
----
+### Controller → Service → Repository → Database
+
+* Controller → Handles API requests
+* Service → Business logic & security checks
+* Repository → Database interaction
+* Security Layer → JWT authentication & authorization
+
+## 🔑 Authentication Flow
+
+1. User logs in via /auth/login
+2. Server returns JWT token
+3. Client sends token in header:
+4. Authorization: Bearer
+5. JWT filter validates token for each request
+6. Access granted based on role and ownership
 
 ## 📡 API Endpoints
 
-### ➕ Create Task
+### 🔐 Auth
 
-POST /tasks
+* POST /auth/register
+* POST /auth/login
 
 ### 📋 Get All Tasks (Pagination + Sorting)
 
@@ -66,22 +98,14 @@ DELETE /tasks/{id}
 
 ## ⚠️ Error Handling
 
-Structured error responses:
+Standard error response format:
 
-* 404 Not Found
-* 400 Bad Request (Validation errors)
-
----
-
-## 🧪 Sample Validation Error
-
-{
-"timestamp": "...",
-"status": 400,
-"error": "Bad Request",
-"errors": {
-"title": "Title is required"
-}
+{  
+"timestamp": "...",  
+"status": 404,  
+"error": "Not Found",  
+"message": "...",  
+"path": "/tasks/1"  
 }
 
 ---
@@ -89,13 +113,40 @@ Structured error responses:
 ## ▶️ Run the Project
 
 1. Clone the repository
-2. Configure MySQL in application.properties
-3. Run the Spring Boot application
+2. git clone https://github.com/dbybek/TaskManagerApplication.git
+3. Navigate to project
+4. cd TaskManagerApplication
+5. Configure database in application.properties
+6. Build project
+7. mvn clean install
+8. Run application
+9. mvn spring-boot
+
+---
+
+## 🌐 API Testing (Swagger)
+
+URL:
+http://localhost:8080/swagger-ui.html
+
+Steps:
+1. Call /auth/login
+2. Copy JWT token
+3. Click Authorize
+4. Enter: Bearer
+5. Access secured APIs
 
 ---
 
 ## 📌 Future Improvements
 
-* JWT Authentication
-* User-specific tasks
-* Deployment (Render / Railway)
+* Task search & filtering
+* Refresh token implementation
+* Rate limiting
+* Unit & integration testing
+
+---
+
+## 👨‍💻 Author
+
+Bibek Swain
